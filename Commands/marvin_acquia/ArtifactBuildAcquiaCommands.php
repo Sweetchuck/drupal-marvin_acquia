@@ -89,10 +89,7 @@ class ArtifactBuildAcquiaCommands extends ArtifactBuildProductCommandsBase {
     $steps = parent::getBuildSteps();
 
     $weight = $steps['prepareDirectory.marvin']['weight'] ?? 0;
-    $steps['prepareDirectory.marvin_acquia'] = [
-      'task' => $this->getTaskGitCloneAndClean(),
-      'weight' => $weight + 1,
-    ];
+    $steps += $this->getTaskGitCloneAndClean($weight);
 
     $weight = $steps['copyFilesCollect.marvin']['weight'] ?? 0;
     $steps['copyFilesCollect.marvin_acquia'] = [
@@ -103,41 +100,99 @@ class ArtifactBuildAcquiaCommands extends ArtifactBuildProductCommandsBase {
     return $steps;
   }
 
-  /**
-   * @return \Closure|\Robo\Contract\TaskInterface
-   */
-  protected function getTaskGitCloneAndClean() {
+  protected function getTaskGitCloneAndClean(int $baseWeight): array {
     $config = $this->getConfig();
     $projectId = (string) $config->get('marvin.acquia.projectId');
     if (!$projectId) {
-      return function (): int {
-        $logger = $this->getLogger();
-        $logContext = [
-          'taskName' => 'Git clone and clean',
-        ];
-
-        $logger->notice(
-          '{taskName} - skipped because of the lack of marvin.acquia.projectId',
-          $logContext
-        );
-
-        return 0;
-      };
+      return [
+        'gitCloneAndClean.ignore.marvin_acquia' => $this->getTaskMissingAcquiaProjectIdMessage('Git clone and clean'),
+        'weight' => $baseWeight + 1,
+      ];
     }
 
-    $remoteName = (string) $config->get('marvin.acquia.remoteName');
-    $remoteUrl = (string) $config->get('marvin.acquia.remoteUrl');
-    $remoteBranch = (string) $config->get('marvin.acquia.remoteBranch');
-    $localBranch = (string) $config->get('marvin.acquia.localBranch');
+    $configNamePrefix = 'marvin.acquia.artifact.gitCloneAndClean';
+    $remoteName = (string) $config->get("{$configNamePrefix}.remoteName");
+    $remoteUrl = (string) $config->get("{$configNamePrefix}.remoteUrl");
+    $remoteBranch = (string) $config->get("{$configNamePrefix}.remoteBranch");
+    $localBranch = (string) $config->get("{$configNamePrefix}.localBranch");
 
-    return $this
-      ->taskGitCloneAndClean()
-      ->setSrcDir($this->srcDir)
-      ->setRemoteName($remoteName)
-      ->setRemoteUrl($remoteUrl)
-      ->setRemoteBranch($remoteBranch)
-      ->setLocalBranch($localBranch)
-      ->deferTaskConfiguration('setWorkingDirectory', 'buildDir');
+    return [
+      'gitCloneAndClean.clone.marvin_acquia' => [
+        'weight' => $baseWeight + 1,
+        'task' => $this
+          ->taskGitCloneAndClean()
+          ->setSrcDir($this->srcDir)
+          ->setRemoteName($remoteName)
+          ->setRemoteUrl($remoteUrl)
+          ->setRemoteBranch($remoteBranch)
+          ->setLocalBranch($localBranch)
+          ->deferTaskConfiguration('setWorkingDirectory', 'buildDir'),
+      ],
+      'gitCloneAndClean.collectGitConfigNames.marvin_acquia' => [
+        'weight' => $baseWeight + 2,
+        'task' => function (RoboStateData $data): int {
+          $gitConfigNamesToCopy = array_keys(
+            $this->getConfig()->get('marvin.acquia.artifact.gitConfigNamesToCopy'),
+            TRUE,
+            TRUE
+          );
+
+          $data['gitConfigCopyItems'] = [];
+          foreach ($gitConfigNamesToCopy as $name) {
+            $data['gitConfigCopyItems'][$name] = [
+              'name' => $name,
+              'srcDir' => '.',
+              'dstDir' => $data['buildDir'],
+            ];
+          }
+
+          return 0;
+        },
+      ],
+      'gitCloneAndClean.copyGitConfig.marvin_acquia' => [
+        'weight' => $baseWeight + 3,
+        'task' => $this
+          ->taskForEach()
+          ->deferTaskConfiguration('setIterable', 'gitConfigCopyItems')
+          ->withBuilder(function (CollectionBuilder $builder, string $name, array $dirs) {
+            $builder
+              ->addTask(
+                $this
+                  ->taskGitConfigGet()
+                  ->setWorkingDirectory($dirs['srcDir'])
+                  ->setSource('local')
+                  ->setName($name)
+                  ->setStopOnFail(FALSE)
+              )
+              ->addCode(function (RoboStateData $data) use ($name): int {
+                $value = $data["git.config.$name"] ?? NULL;
+
+                if ($value === NULL) {
+                  $data['gitConfigSetCommand'] = sprintf(
+                    'git config --unset %s || true',
+                    escapeshellarg($name)
+                  );
+
+                  return 0;
+                }
+
+                $data['gitConfigSetCommand'] = sprintf(
+                  'git config %s %s',
+                  escapeshellarg($name),
+                  escapeshellarg($value)
+                );
+
+                return 0;
+              })
+              ->addTask(
+                $this
+                  ->taskExecStack()
+                  ->dir($dirs['dstDir'])
+                  ->deferTaskConfiguration('exec', 'gitConfigSetCommand')
+              );
+          }),
+      ],
+    ];
   }
 
   /**
@@ -162,6 +217,21 @@ class ArtifactBuildAcquiaCommands extends ArtifactBuildProductCommandsBase {
           ->ignoreDotFiles(FALSE)
           ->files();
       }
+
+      return 0;
+    };
+  }
+
+  protected function getTaskMissingAcquiaProjectIdMessage(string $taskName) {
+    return function () use ($taskName): int {
+      $logger = $this->getLogger();
+
+      $logger->warning(
+        '{taskName} - skipped because of the lack of marvin.acquia.projectId',
+        [
+          'taskName' => $taskName,
+        ]
+      );
 
       return 0;
     };

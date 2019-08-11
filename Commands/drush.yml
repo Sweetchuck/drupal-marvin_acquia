@@ -11,38 +11,44 @@ marvin:
     ##
     projectId: ''
 
-    ##
-    # @todo
-    #
-    # Example value: acquia
-    #
-    # @var string
-    ##
-    remoteName: 'acquia'
+    artifact:
+      gitCloneAndClean:
+        ##
+        # @todo
+        #
+        # Example value: acquia
+        #
+        # @var string
+        ##
+        remoteName: 'acquia'
 
-    ##
-    # @todo
-    #
-    # Example value: ${marvin.acquia.projectId}@svn-1234.devcloud.hosting.acquia.com:${marvin.acquia.projectId}.git
-    #
-    # @var string
-    ##
-    remoteUrl: ''
+        ##
+        # @todo
+        #
+        # Example value: ${marvin.acquia.projectId}@svn-1234.devcloud.hosting.acquia.com:${marvin.acquia.projectId}.git
+        #
+        # @var string
+        ##
+        remoteUrl: ''
 
-    ##
-    # @todo
-    #
-    # Example value: dev
-    #
-    # @var string
-    ##
-    remoteBranch: 'master'
+        ##
+        # @todo
+        #
+        # Example value: dev
+        #
+        # @var string
+        ##
+        remoteBranch: 'master'
 
-    ##
-    # @todo
-    #
-    # Example value: acquia-dev
-    #
-    # @var string
-    ##
-    localBranch: 'master'
+        ##
+        # @todo
+        #
+        # Example value: acquia-dev
+        #
+        # @var string
+        ##
+        localBranch: 'master'
+
+      gitConfigNamesToCopy:
+        user.name: true
+        user.email: true

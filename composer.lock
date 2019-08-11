@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5534e83940e1a14af6633eb2d3c1b0fb",
+    "content-hash": "e4a86963914547c9cea2efee4b42e973",
     "packages": [
         {
             "name": "consolidation/annotated-command",
@@ -721,7 +721,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sweetchuck/drupal-marvin.git",
-                "reference": "e60a126e02dd1ab9f4c2dcbb5af463b74ca72249"
+                "reference": "c1a1786b2e57ba4fd02e2e4dd7d52387eb9fb163"
             },
             "require": {
                 "danielstjules/stringy": "^3.1",
@@ -864,7 +864,7 @@
                 "GPL-2.0-or-later"
             ],
             "description": "Set of developer helper Drush commands",
-            "time": "2019-04-28T16:54:20+00:00"
+            "time": "2019-08-08T20:49:59+00:00"
         },
         {
             "name": "drupal/marvin_product",
@@ -872,10 +872,11 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sweetchuck/drupal-marvin_product.git",
-                "reference": "f5556dc60590fd6197b70346540ac52fe0cde09a"
+                "reference": "69d7015415d02dba3f34f6dd08f977fae8ac2c1a"
             },
             "require": {
                 "drupal/marvin": "dev-8.x-1.x",
+                "ext-json": "*",
                 "icecave/semver": "^3.0"
             },
             "conflict": {
@@ -996,7 +997,7 @@
                 "GPL-3.0-or-later"
             ],
             "description": "Drush commands to manage contrib development",
-            "time": "2019-05-29T19:38:06+00:00"
+            "time": "2019-08-08T20:50:11+00:00"
         },
         {
             "name": "grasmash/expander",
@@ -3360,16 +3361,16 @@
         },
         {
             "name": "doctrine/annotations",
-            "version": "v1.6.1",
+            "version": "v1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/annotations.git",
-                "reference": "53120e0eb10355388d6ccbe462f1fea34ddadb24"
+                "reference": "fa4c4e861e809d6a1103bd620cce63ed91aedfeb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/annotations/zipball/53120e0eb10355388d6ccbe462f1fea34ddadb24",
-                "reference": "53120e0eb10355388d6ccbe462f1fea34ddadb24",
+                "url": "https://api.github.com/repos/doctrine/annotations/zipball/fa4c4e861e809d6a1103bd620cce63ed91aedfeb",
+                "reference": "fa4c4e861e809d6a1103bd620cce63ed91aedfeb",
                 "shasum": ""
             },
             "require": {
@@ -3378,12 +3379,12 @@
             },
             "require-dev": {
                 "doctrine/cache": "1.*",
-                "phpunit/phpunit": "^6.4"
+                "phpunit/phpunit": "^7.5@dev"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.6.x-dev"
+                    "dev-master": "1.7.x-dev"
                 }
             },
             "autoload": {
@@ -3397,16 +3398,16 @@
             ],
             "authors": [
                 {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@gmail.com"
+                },
+                {
                     "name": "Roman Borschel",
                     "email": "roman@code-factory.org"
                 },
                 {
                     "name": "Benjamin Eberlei",
                     "email": "kontakt@beberlei.de"
-                },
-                {
-                    "name": "Guilherme Blanco",
-                    "email": "guilhermeblanco@gmail.com"
                 },
                 {
                     "name": "Jonathan Wage",
@@ -3424,7 +3425,7 @@
                 "docblock",
                 "parser"
             ],
-            "time": "2019-03-25T19:12:02+00:00"
+            "time": "2019-08-08T18:11:40+00:00"
         },
         {
             "name": "doctrine/cache",
@@ -4114,16 +4115,16 @@
         },
         {
             "name": "drupal/core",
-            "version": "8.7.5",
+            "version": "8.7.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core.git",
-                "reference": "12cea52c782bb76e666c54c2a65cd3946daa3613"
+                "reference": "39164616332832e1456199d32fc3ed11562f4721"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal/core/zipball/12cea52c782bb76e666c54c2a65cd3946daa3613",
-                "reference": "12cea52c782bb76e666c54c2a65cd3946daa3613",
+                "url": "https://api.github.com/repos/drupal/core/zipball/39164616332832e1456199d32fc3ed11562f4721",
+                "reference": "39164616332832e1456199d32fc3ed11562f4721",
                 "shasum": ""
             },
             "require": {
@@ -4354,7 +4355,7 @@
                 "GPL-2.0-or-later"
             ],
             "description": "Drupal is an open source content management platform powering millions of websites and applications.",
-            "time": "2019-07-16T16:24:57+00:00"
+            "time": "2019-08-07T19:19:20+00:00"
         },
         {
             "name": "drush/drush",
@@ -8759,6 +8760,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "drupal/marvin": 20,
+        "drupal/marvin_product": 20,
         "sweetchuck/robo-git": 20
     },
     "prefer-stable": true,
@@ -8768,6 +8771,7 @@
     },
     "platform-dev": {
         "ext-dom": "*",
+        "ext-json": "*",
         "ext-pdo": "*",
         "ext-pdo_sqlite": "*"
     }
