@@ -105,8 +105,10 @@ class ArtifactBuildAcquiaCommands extends ArtifactBuildProductCommandsBase {
     $projectId = (string) $config->get('marvin.acquia.projectId');
     if (!$projectId) {
       return [
-        'gitCloneAndClean.ignore.marvin_acquia' => $this->getTaskMissingAcquiaProjectIdMessage('Git clone and clean'),
-        'weight' => $baseWeight + 1,
+        'gitCloneAndClean.ignore.marvin_acquia' => [
+          'task' => $this->getTaskMissingAcquiaProjectIdMessage('Git clone and clean'),
+          'weight' => $baseWeight + 1,
+        ],
       ];
     }
 
