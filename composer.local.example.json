@@ -26,10 +26,10 @@
         }
     },
     "require": {
-        "php": ">=7.1",
+        "php": ">=7.2",
         "drupal/marvin": "*",
         "drupal/marvin_product": "*",
-        "sweetchuck/robo-git": "^0.1"
+        "sweetchuck/robo-git": "^0.2"
     },
     "require-dev": {
         "ext-dom": "*",
@@ -40,17 +40,19 @@
         "composer/installers": "^1.5",
         "cweagans/composer-patches": "^1.6",
         "drupal-composer/drupal-scaffold": "^2.5",
-        "drupal/core": "^8.5",
-        "drush/drush": "^9.6.2",
+        "drupal/core-recommended": "^8.8",
+        "drush/drush": "^10.1",
         "mikey179/vfsstream": "^1.6",
-        "phpunit/phpunit": "^6.3",
+        "oomphinc/composer-installers-extender": "^1.1",
+        "phpunit/phpunit": "^7.5",
         "sweetchuck/git-hooks": "^0.0",
-        "sweetchuck/robo-phpcs": "^0.0",
-        "sweetchuck/robo-phpmd": "^0.0",
-        "weitzman/drupal-test-traits": "^1.1"
+        "sweetchuck/robo-phpcs": "^0.1",
+        "sweetchuck/robo-phpmd": "^0.1",
+        "weitzman/drupal-test-traits": "^1.1",
+        "zaporylie/composer-drupal-optimizations": "^1.0"
     },
     "suggest": {
-        "drush/drush": "9.6.*"
+        "drush/drush": ">=10"
     },
     "autoload": {
         "psr-4": {
