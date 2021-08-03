@@ -8,14 +8,11 @@ use Drush\TestTraits\DrushTestTrait;
 use Webmozart\PathUtil\Path;
 use weitzman\DrupalTestTraits\ExistingSiteBase;
 
-class UnishIntegrationTestCase extends ExistingSiteBase {
+class CommandsTestCase extends ExistingSiteBase {
 
   use DrushTestTrait;
 
-  /**
-   * @var string
-   */
-  protected $projectName = 'project_01';
+  protected string $projectName = 'project_01';
 
   /**
    * {@inheritdoc}

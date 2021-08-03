@@ -1,0 +1,6 @@
+services:
+  marvin_acquia.artifact_build_acquia.commands:
+    class: 'Drush\Commands\marvin_acquia\ArtifactBuildAcquiaCommands'
+    tags:
+      -
+        name: 'drush.command'

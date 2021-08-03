@@ -20,12 +20,12 @@ class ArtifactBuildAcquiaCommands extends ArtifactBuildProductCommandsBase {
   use GitComboTaskLoader;
 
   /**
-   * {@inheritdoc}
+   * {@inheritDoc}
    */
   protected $artifactType = 'acquia';
 
   /**
-   * {@inheritdoc}
+   * {@inheritDoc}
    */
   protected $drupalRootDir = 'docroot';
 
@@ -85,11 +85,21 @@ class ArtifactBuildAcquiaCommands extends ArtifactBuildProductCommandsBase {
   /**
    * {@inheritdoc}
    */
+  protected function getInitialStateData(): array {
+    $data = parent::getInitialStateData();
+    $data['srcDir'] = $this->srcDir;
+
+    return $data;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function getBuildSteps(): array {
     $steps = parent::getBuildSteps();
 
     $weight = $steps['prepareDirectory.marvin']['weight'] ?? 0;
-    $steps += $this->getTaskGitCloneAndClean($weight);
+    $steps += $this->getBuildStepsGitCloneAndClean($weight);
 
     $weight = $steps['copyFilesCollect.marvin']['weight'] ?? 0;
     $steps['copyFilesCollect.marvin_acquia'] = [
@@ -100,7 +110,12 @@ class ArtifactBuildAcquiaCommands extends ArtifactBuildProductCommandsBase {
     return $steps;
   }
 
-  protected function getTaskGitCloneAndClean(int $baseWeight): array {
+  /**
+   * @todo Native Robo tasks.
+   *
+   * @return array[]
+   */
+  protected function getBuildStepsGitCloneAndClean(int $baseWeight): array {
     $config = $this->getConfig();
     $projectId = (string) $config->get('marvin.acquia.projectId');
     if (!$projectId) {
@@ -112,89 +127,108 @@ class ArtifactBuildAcquiaCommands extends ArtifactBuildProductCommandsBase {
       ];
     }
 
-    $configNamePrefix = 'marvin.acquia.artifact.gitCloneAndClean';
-    $remoteName = (string) $config->get("{$configNamePrefix}.remoteName");
-    $remoteUrl = (string) $config->get("{$configNamePrefix}.remoteUrl");
-    $remoteBranch = (string) $config->get("{$configNamePrefix}.remoteBranch");
-    $localBranch = (string) $config->get("{$configNamePrefix}.localBranch");
+    $configNamePrefix = 'marvin.acquia.artifact';
+
+    $cloneOptions = (array) $config->get("$configNamePrefix.gitCloneAndClean");
 
     return [
       'gitCloneAndClean.clone.marvin_acquia' => [
         'weight' => $baseWeight + 1,
-        'task' => $this
-          ->taskGitCloneAndClean()
-          ->setSrcDir($this->srcDir)
-          ->setRemoteName($remoteName)
-          ->setRemoteUrl($remoteUrl)
-          ->setRemoteBranch($remoteBranch)
-          ->setLocalBranch($localBranch)
-          ->deferTaskConfiguration('setWorkingDirectory', 'buildDir'),
+        'task' => $this->getTaskGitCloneAndCleanClone($cloneOptions),
       ],
       'gitCloneAndClean.collectGitConfigNames.marvin_acquia' => [
         'weight' => $baseWeight + 2,
-        'task' => function (RoboStateData $data): int {
-          $gitConfigNamesToCopy = array_keys(
-            $this->getConfig()->get('marvin.acquia.artifact.gitConfigNamesToCopy'),
-            TRUE,
-            TRUE
-          );
-
-          $data['gitConfigCopyItems'] = [];
-          foreach ($gitConfigNamesToCopy as $name) {
-            $data['gitConfigCopyItems'][$name] = [
-              'name' => $name,
-              'srcDir' => '.',
-              'dstDir' => $data['buildDir'],
-            ];
-          }
-
-          return 0;
-        },
+        'task' => $this->getTaskGitCloneAndCleanCollectGitConfigNames(),
       ],
       'gitCloneAndClean.copyGitConfig.marvin_acquia' => [
         'weight' => $baseWeight + 3,
-        'task' => $this
-          ->taskForEach()
-          ->deferTaskConfiguration('setIterable', 'gitConfigCopyItems')
-          ->withBuilder(function (CollectionBuilder $builder, string $name, array $dirs) {
-            $builder
-              ->addTask(
-                $this
-                  ->taskGitConfigGet()
-                  ->setWorkingDirectory($dirs['srcDir'])
-                  ->setSource('local')
-                  ->setName($name)
-                  ->setStopOnFail(FALSE)
-              )
-              ->addCode(function (RoboStateData $data) use ($name): int {
-                $value = $data["git.config.$name"] ?? NULL;
-
-                if ($value === NULL) {
-                  $data['gitConfigSetCommand'] = sprintf(
-                    'git config --unset %s || true',
-                    escapeshellarg($name)
-                  );
-
-                  return 0;
-                }
-
-                $data['gitConfigSetCommand'] = sprintf(
-                  'git config %s %s',
-                  escapeshellarg($name),
-                  escapeshellarg($value)
-                );
-
-                return 0;
-              })
-              ->addTask(
-                $this
-                  ->taskExecStack()
-                  ->dir($dirs['dstDir'])
-                  ->deferTaskConfiguration('exec', 'gitConfigSetCommand')
-              );
-          }),
+        'task' => $this->getTaskGitCloneAndCleanCopyGitConfig(),
       ],
     ];
+  }
+
+  /**
+   * @return \Closure|\Robo\Contract\TaskInterface
+   */
+  protected function getTaskGitCloneAndCleanClone(array $options) {
+    return $this
+      ->taskGitCloneAndClean()
+      ->setRemoteName($options['remoteName'] ?? '')
+      ->setRemoteUrl($options['remoteUrl'] ?? '')
+      ->setRemoteBranch($options['remoteBranch'] ?? '')
+      ->setLocalBranch($options['localBranch'] ?? '')
+      ->deferTaskConfiguration('setSrcDir', 'srcDir')
+      ->deferTaskConfiguration('setWorkingDirectory', 'buildDir');
+  }
+
+  /**
+   * @return \Closure|\Robo\Contract\TaskInterface
+   */
+  protected function getTaskGitCloneAndCleanCollectGitConfigNames() {
+    return function (RoboStateData $data): int {
+      $gitConfigNamesToCopy = array_keys(
+        $this->getConfig()->get('marvin.acquia.artifact.gitConfigNamesToCopy'),
+        TRUE,
+        TRUE
+      );
+
+      $data['gitConfigCopyItems'] = [];
+      foreach ($gitConfigNamesToCopy as $name) {
+        $data['gitConfigCopyItems'][$name] = [
+          'name' => $name,
+          'srcDir' => $this->srcDir,
+          'dstDir' => $data['buildDir'],
+        ];
+      }
+
+      return 0;
+    };
+  }
+
+  /**
+   * @return \Closure|\Robo\Contract\TaskInterface
+   */
+  protected function getTaskGitCloneAndCleanCopyGitConfig() {
+    return $this
+      ->taskForEach()
+      ->deferTaskConfiguration('setIterable', 'gitConfigCopyItems')
+      ->withBuilder(function (CollectionBuilder $builder, string $name, array $dirs) {
+        $builder
+          ->addTask(
+            $this
+              ->taskGitConfigGet()
+              ->setWorkingDirectory($dirs['srcDir'])
+              ->setSource('local')
+              ->setName($name)
+              ->setStopOnFail(FALSE)
+          )
+          ->addCode(function (RoboStateData $data) use ($name): int {
+            $value = $data["git.config.$name"] ?? NULL;
+
+            if ($value === NULL) {
+              $data['gitConfigSetCommand'] = sprintf(
+                'git config --unset %s || true',
+                escapeshellarg($name)
+              );
+
+              return 0;
+            }
+
+            $data['gitConfigSetCommand'] = sprintf(
+              'git config %s %s',
+              escapeshellarg($name),
+              escapeshellarg($value)
+            );
+
+            return 0;
+          })
+          ->addTask(
+            $this
+              ->taskExecStack()
+              ->dir($dirs['dstDir'])
+              ->deferTaskConfiguration('exec', 'gitConfigSetCommand')
+          );
+      });
   }
 
   /**

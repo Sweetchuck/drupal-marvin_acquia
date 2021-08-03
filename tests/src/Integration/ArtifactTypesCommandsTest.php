@@ -10,7 +10,7 @@ namespace Drupal\Tests\marvin_acquia\Integration;
  *
  * @covers \Drush\Commands\marvin_acquia\ArtifactBuildAcquiaCommands<extended>
  */
-class ArtifactTypesCommandsTest extends UnishIntegrationTestCase {
+class ArtifactTypesCommandsTest extends CommandsTestCase {
 
   public function testArtifactTypesJson() {
     $options = $this->getCommonCommandLineOptions();

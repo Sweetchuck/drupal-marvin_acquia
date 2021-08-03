@@ -49,6 +49,14 @@ marvin:
         ##
         localBranch: 'master'
 
+      ##
+      # In this array a key is a Git configuration name, the value indicates that the Git configuration should be copied
+      # into the destination repository or not.
+      #
+      # @see https://git-scm.com/docs/git-config#_variables
+      #
+      # @var bool[]
+      ##
       gitConfigNamesToCopy:
         user.name: true
         user.email: true

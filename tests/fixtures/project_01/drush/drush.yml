@@ -1,0 +1,10 @@
+drush:
+  paths:
+    config:
+      - '${drush.vendor-dir}/../tests/fixtures/project_01/drush/Commands/contrib/marvin/Commands/drush.yml'
+      - '${drush.vendor-dir}/../tests/fixtures/project_01/drush/Commands/contrib/marvin_product/Commands/drush.yml'
+      - '${drush.vendor-dir}/../tests/fixtures/project_01/drush/Commands/custom/marvin_acquia/Commands/drush.yml'
+    include:
+      - '${drush.vendor-dir}/../tests/fixtures/project_01/drush/Commands/contrib/marvin'
+      - '${drush.vendor-dir}/../tests/fixtures/project_01/drush/Commands/contrib/marvin_product'
+      - '${drush.vendor-dir}/../tests/fixtures/project_01/drush/Commands/custom/marvin_acquia'
