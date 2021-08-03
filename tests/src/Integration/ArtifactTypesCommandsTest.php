@@ -24,6 +24,12 @@ class ArtifactTypesCommandsTest extends CommandsTestCase {
         'id' => 'acquia',
         'weight' => 0,
       ],
+      'vanilla' => [
+        'label' => "Vanilla",
+        'description' => 'Not customized',
+        'id' => 'vanilla',
+        'weight' => 0,
+      ],
     ];
 
     static::assertSame(
@@ -38,8 +44,9 @@ class ArtifactTypesCommandsTest extends CommandsTestCase {
     $this->drush('marvin:artifact:types', [], $options);
 
     $expected = implode(PHP_EOL, [
-      ' ID    Label   Description                       ',
-      " acquia Acquia Optimized for Acquia Cloud hosting",
+      ' ID      Label   Description                        ',
+      ' acquia  Acquia  Optimized for Acquia Cloud hosting ',
+      ' vanilla Vanilla Not customized                     ',
       '',
     ]);
 

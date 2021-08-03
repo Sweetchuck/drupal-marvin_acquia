@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Drush\Commands\marvin_acquia;
 
+use Drupal\marvin\ComposerInfo;
 use Drupal\marvin\Robo\VersionNumberTaskLoader;
 use Drush\Commands\marvin_product\ArtifactBuildProductCommandsBase;
 use Robo\Collection\CollectionBuilder;
@@ -11,6 +12,7 @@ use Robo\State\Data as RoboStateData;
 use Sweetchuck\Robo\Git\GitComboTaskLoader;
 use Sweetchuck\Robo\Git\GitTaskLoader;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
 class ArtifactBuildAcquiaCommands extends ArtifactBuildProductCommandsBase {
@@ -19,15 +21,12 @@ class ArtifactBuildAcquiaCommands extends ArtifactBuildProductCommandsBase {
   use GitTaskLoader;
   use GitComboTaskLoader;
 
-  /**
-   * {@inheritDoc}
-   */
-  protected $artifactType = 'acquia';
+  public function __construct(?ComposerInfo $composerInfo = NULL, ?Filesystem $fs = NULL) {
+    $this->artifactType = 'acquia';
+    $this->drupalRootDir = 'docroot';
 
-  /**
-   * {@inheritDoc}
-   */
-  protected $drupalRootDir = 'docroot';
+    parent::__construct($composerInfo, $fs);
+  }
 
   /**
    * @hook on-event marvin:artifact:types
@@ -39,15 +38,20 @@ class ArtifactBuildAcquiaCommands extends ArtifactBuildProductCommandsBase {
 
     return [
       $this->artifactType => [
-        'label' => dt('Acquia'),
-        'description' => dt('Optimized for Acquia Cloud hosting'),
+        'label' => 'Acquia',
+        'description' => 'Optimized for Acquia Cloud hosting',
       ],
     ];
   }
 
   /**
+   * Generates an artifact which suitable for Acquia Cloud hosting.
+   *
    * @command marvin:artifact:build:acquia
    * @bootstrap none
+   *
+   * @option string $version-bump
+   *   Allowed values: "major", "minor", "patch" or a semantic version number.
    *
    * @todo Validate "version-bump" option.
    * @todo Rename this method.
