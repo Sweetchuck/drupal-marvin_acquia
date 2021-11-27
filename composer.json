@@ -162,9 +162,6 @@
                 "[web-root]/.gitignore": {
                     "mode": "skip"
                 },
-                "[web-root]/.ht.router.php": {
-                    "mode": "skip"
-                },
                 "[web-root]/example.gitignore": {
                     "mode": "skip"
                 },
