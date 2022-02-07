@@ -1,14 +1,44 @@
 {
+    "type": "drupal-drush",
     "name": "drupal/marvin_acquia",
     "description": "Acquia hosting related Drush commands",
     "license": "GPL-3.0-or-later",
-    "type": "drupal-drush",
+    "keywords": [
+        "drupal",
+        "drush",
+        "marvin",
+        "acquia"
+    ],
+    "homepage": "https://github.com/Sweetchuck/drupal-marvin_acquia",
+    "authors": [
+        {
+            "name": "Andor",
+            "role": "Maintainer",
+            "homepage": "https://github.com/Sweetchuck"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/Sweetchuck/drupal-marvin_acquia",
+        "issues": "https://github.com/Sweetchuck/drupal-marvin_acquia/issues"
+    },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
-        "bin-dir": "bin",
-        "preferred-install": "dist",
+        "allow-plugins": {
+            "composer/installers": true,
+            "cweagans/composer-patches": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "drupal/core-composer-scaffold": true,
+            "oomphinc/composer-installers-extender": true,
+            "sweetchuck/composer-repo-path": true,
+            "sweetchuck/composer-suite": true,
+            "sweetchuck/git-hooks": true
+        },
         "optimize-autoloader": true,
+        "preferred-install": {
+            "danielstjules/stringy": "source",
+            "*": "dist"
+        },
         "sort-packages": true
     },
     "repositories": {
@@ -29,7 +59,7 @@
         "php": ">=7.4",
         "drupal/marvin": "2.x-dev",
         "drupal/marvin_product": "2.x-dev",
-        "sweetchuck/robo-git": "1.x-dev"
+        "sweetchuck/robo-git": "2.x-dev"
     },
     "require-dev": {
         "ext-dom": "*",
@@ -41,20 +71,22 @@
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7",
         "drupal/core-composer-scaffold": "^9.0",
         "drupal/core-recommended": "^9.0",
-        "drush/drush": "^10.1",
+        "drush/drush": "^11.0",
         "mikey179/vfsstream": "^1.6",
+        "nuvoleweb/robo-config": "2.x-dev",
         "oomphinc/composer-installers-extender": "^2.0",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpunit/phpunit": "^9.5",
-        "sweetchuck/composer-suite": "^1.2",
+        "sweetchuck/composer-repo-path": "1.x-dev",
+        "sweetchuck/composer-suite": "1.x-dev",
         "sweetchuck/git-hooks": "2.x-dev",
-        "sweetchuck/robo-phpcs": "1.x-dev",
-        "sweetchuck/robo-phpmd": "1.x-dev",
+        "sweetchuck/robo-phpcs": "2.x-dev",
+        "sweetchuck/robo-phpmd": "2.x-dev",
         "symfony/phpunit-bridge": "^5.3",
-        "weitzman/drupal-test-traits": "^1.1"
+        "weitzman/drupal-test-traits": "dev-master#b902b579a99393dabd7eaad4f0041c9da7e29152"
     },
     "suggest": {
-        "drush/drush": ">=10"
+        "drush/drush": ">=11"
     },
     "autoload": {
         "psr-4": {
@@ -80,7 +112,7 @@
         },
         "drush": {
             "services": {
-                "drush.services.yml": "^9 || ^10"
+                "drush.services.yml": "^9 || ^10 || ^11"
             }
         },
         "enable-patching": true,
