@@ -56,7 +56,7 @@
         }
     },
     "require": {
-        "php": ">=7.4",
+        "php": ">=8.1",
         "drupal/marvin": "2.x-dev",
         "drupal/marvin_product": "2.x-dev",
         "sweetchuck/robo-git": "2.x-dev"
@@ -83,7 +83,7 @@
         "sweetchuck/robo-phpcs": "2.x-dev",
         "sweetchuck/robo-phpmd": "2.x-dev",
         "symfony/phpunit-bridge": "^5.3",
-        "weitzman/drupal-test-traits": "dev-master#b902b579a99393dabd7eaad4f0041c9da7e29152"
+        "weitzman/drupal-test-traits": "2.x-dev"
     },
     "suggest": {
         "drush/drush": ">=11"
